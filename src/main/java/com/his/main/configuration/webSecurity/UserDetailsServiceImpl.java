@@ -1,8 +1,8 @@
 package com.his.main.configuration.webSecurity;
-;
+
 import com.his.main.authEntities.UserMaster;
-import com.pibauth.repositories.ResourceMasterRepo;
-import com.pibauth.repositories.UserAuthenticationMasterRepo;
+import com.his.main.dto.UserAuthDetails;
+import com.his.main.repositories.UserAuthenticationMasterRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,8 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-//    @Autowired
-//    private UserAuthenticationMasterRepo userAuthenticationMasterRepo;
+    @Autowired
+    private UserAuthenticationMasterRepo userAuthenticationMasterRepo;
 
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
@@ -27,8 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserMaster userAuthenticationMaster = this.userAuthenticationMasterRepo.findByUserMastUsername(username);
 
         if(userAuthenticationMaster!=null){
-            List<ResourceMaster> resourceMasterByUsername = userAuthenticationMasterRepo.findUserAccessibleResource(userAuthenticationMaster.getUserMastId());
-            UserAuthDetails userAuthDetails = new UserAuthDetails(userAuthenticationMaster.getUserMastUsername(),userAuthenticationMaster.getUserMastPassword(),resourceMasterByUsername);
+            UserAuthDetails userAuthDetails = new UserAuthDetails(userAuthenticationMaster.getUserMastUsername(),userAuthenticationMaster.getUserMastPassword());
             System.out.println(userAuthDetails);
             return userAuthDetails;
         }

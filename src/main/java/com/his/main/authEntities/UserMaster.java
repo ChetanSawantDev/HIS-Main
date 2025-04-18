@@ -13,12 +13,16 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
 @Table(name = "HIS_USER_AUTH_MASTER")
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserMaster {
@@ -54,4 +58,12 @@ public class UserMaster {
     private ZonedDateTime lastLoggedInAt;
     
     private String companyId;
+
+	public String getUserMastUsername() {
+		return this.userMastUsername;
+	}
+
+	public String getUserMastPassword() {
+		return this.userMastPassword;
+	}
 }
