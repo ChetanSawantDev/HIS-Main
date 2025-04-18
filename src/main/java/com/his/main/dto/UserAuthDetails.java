@@ -14,28 +14,22 @@ import java.util.Collection;
 import java.util.List;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class UserAuthDetails extends UserMaster implements UserDetails {
 
     private String username;
     private String password;
-    Collection<? extends GrantedAuthority> authorities;
+
+    public UserAuthDetails() {}
 
     public UserAuthDetails(String username,String password) {
         this.username = username;
         this.password = password;
-        List<GrantedAuthority> auths = new ArrayList<>();
-        this.authorities = auths;
     }
 
-    public UserAuthDetails() {}
-
-	@Override
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
+        return null;
     }
 
     @Override
