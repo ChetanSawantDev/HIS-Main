@@ -38,6 +38,7 @@ public class WebSecurityConfig {
         return http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("auth/authenticateUser/**").permitAll()
+                        .requestMatchers("scheduler/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
