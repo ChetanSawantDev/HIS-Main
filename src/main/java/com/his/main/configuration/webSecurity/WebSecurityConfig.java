@@ -39,6 +39,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("auth/authenticateUser/**").permitAll()
                         .requestMatchers("scheduler/**").permitAll()
+                        .requestMatchers("reportService/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

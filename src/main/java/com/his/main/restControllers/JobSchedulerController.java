@@ -23,6 +23,16 @@ public class JobSchedulerController {
         }catch (Exception e){
             return ResponseEntity.status(500).body("Error : " + e.getMessage());
         }
+    }
 
+    @PostMapping("/update")
+    public ResponseEntity<String> updateScheduledJobStatus(@RequestParam String updateType,
+                                                           @RequestParam  String jobName){
+        try {
+            jobSchedulerService.updateJobStatus(updateType, jobName);
+            return ResponseEntity.ok("Scheduled Job " + updateType.toLowerCase() + " successfully !");
+        }catch (Exception e){
+            return ResponseEntity.status(500).body("Error : " + e.getMessage());
+        }
     }
 }
