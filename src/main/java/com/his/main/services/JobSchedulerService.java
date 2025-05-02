@@ -1,14 +1,20 @@
 package com.his.main.services;
 
-import com.his.main.dto.quartzJob.ReportJob;
+import com.his.main.quartzJob.ReportJob;
+import com.his.main.entities.mongo.ReportLogsMaster;
+import com.his.main.entities.mongo.ReportPayload;
+import com.his.main.repositories.mongo.ReportLogRepository;
+import com.his.main.repositories.mongo.ReportPayloadRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import org.his.core.utiltiy.CommonUtility;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class JobSchedulerService {
@@ -16,23 +22,44 @@ public class JobSchedulerService {
     private Scheduler scheduler;
 
     @Autowired
+    private ReportPayloadRepo reportPayloadRepo;
+    @Autowired
+    private ReportLogRepository reportLogRepository;
+    @Autowired
     private EntityManager entityManager;
 
-    public void scheduleDynamicJob(String jobName, String cronExpression) throws Exception {
 
+    //Responsible For Scheduling Job
+    public void scheduleDynamicReportJob(ReportPayload reportPayload) throws Exception {
+        String generatedUniqueJobName = reportPayload.getJobName() + "%" + UUID.randomUUID();
         JobDetail jobDetail = JobBuilder.newJob(ReportJob.class)
-                .withIdentity(jobName, "dynamic-jobs")
+                .withIdentity(generatedUniqueJobName, "dynamic-jobs")
                 .storeDurably()
                 .build();
 
         Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(jobName + "_trigger", "dynamic-triggers")
-                .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+                .withIdentity(generatedUniqueJobName + "_trigger", "dynamic-triggers")
+                .withSchedule(CronScheduleBuilder.cronSchedule(reportPayload.getCronExpression()))
                 .withPriority(5)
                 .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
 
+        String formattedJobKey = CommonUtility.formatJobKey(
+                jobDetail.getKey().getGroup() + "." + jobDetail.getKey().getName()
+        );
+        reportPayload.setJobKey(formattedJobKey);
+        reportPayload.setUniqueJobName(jobDetail.getKey() + UUID.randomUUID().toString());
+        ReportPayload reportPayloadSaved = reportPayloadRepo.save(reportPayload);
+
+        reportLogRepository.save(
+                ReportLogsMaster.builder()
+                        .jobKey(reportPayload.getJobName())
+                        .reportName(generatedUniqueJobName)
+                        .status(CommonUtility.REPORT_REQUESTED)
+                        .requestedBy("User")
+                        .build()
+        );
     }
 
     public void updateJobStatus( String updateType, String jobName ) throws SchedulerException{

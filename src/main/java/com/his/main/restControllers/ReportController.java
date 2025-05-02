@@ -2,6 +2,7 @@ package com.his.main.restControllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.his.main.entities.mongo.ReportPayload;
+import com.his.main.services.JobSchedulerService;
 import com.his.main.services.ReportServices;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ public class ReportController {
     @Autowired
     private ReportServices reportServices;
 
+    @Autowired
+    private JobSchedulerService jobSchedulerService;
 
     @PostMapping("/requestReport")
     public ResponseEntity<String> saveReportPayload(@RequestBody ReportPayload reportPayload){
@@ -27,7 +30,7 @@ public class ReportController {
     }
 
     @GetMapping("/getReportPayloads")
-    public ResponseEntity<String> getReportPayload(){
+    public ResponseEntity<String> getAllReportPayload(){
         try{
             ObjectMapper objectMapper = new ObjectMapper();
             return ResponseEntity.ok(objectMapper.writeValueAsString(reportServices.getAllReportPayload()));
@@ -36,4 +39,14 @@ public class ReportController {
         }
     }
 
+
+    @PostMapping("scheduleReport")
+    public ResponseEntity<String> scheduleReportForPrint(@RequestBody ReportPayload reportPayload){
+        try{
+            jobSchedulerService.scheduleDynamicReportJob(reportPayload);
+            return ResponseEntity.ok("Success");
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
 }

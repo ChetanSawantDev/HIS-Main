@@ -14,16 +14,16 @@ public class JobSchedulerController {
 
     @Autowired
     private JobSchedulerService jobSchedulerService;
-    @PostMapping("/create")
-    public ResponseEntity<String> scheduleJob(@RequestParam String jobName,
-                                              @RequestParam String cron){
-        try{
-            jobSchedulerService.scheduleDynamicJob(jobName,cron);
-            return ResponseEntity.ok("Job Scheduled Successfully !");
-        }catch (Exception e){
-            return ResponseEntity.status(500).body("Error : " + e.getMessage());
-        }
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<String> scheduleJob(@RequestParam String jobName,
+//                                              @RequestParam String cron){
+//        try{
+//            jobSchedulerService.scheduleDynamicJob(jobName,cron);
+//            return ResponseEntity.ok("Job Scheduled Successfully !");
+//        }catch (Exception e){
+//            return ResponseEntity.status(500).body("Error : " + e.getMessage());
+//        }
+//    }
 
     @PostMapping("/update")
     public ResponseEntity<String> updateScheduledJobStatus(@RequestParam String updateType,
