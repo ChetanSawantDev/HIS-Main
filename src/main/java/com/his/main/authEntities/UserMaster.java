@@ -2,15 +2,7 @@ package com.his.main.authEntities;
 
 import java.time.ZonedDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -20,7 +12,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "HIS_USER_AUTH_MASTER")
-@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -56,7 +47,11 @@ public class UserMaster {
 
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime lastLoggedInAt;
-    
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "designation_id")
+    private DesignationMaster userDesignation;
+
     private String companyId;
 
 	public String getUserMastUsername() {

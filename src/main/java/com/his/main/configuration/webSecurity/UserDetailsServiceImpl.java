@@ -26,11 +26,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserMaster userAuthenticationMaster = this.userAuthenticationMasterRepo.findByUserMastUsername(username);
 
-        if(userAuthenticationMaster!=null){
-            UserAuthDetails userAuthDetails = new UserAuthDetails(userAuthenticationMaster.getUserMastUsername(),userAuthenticationMaster.getUserMastPassword());
+        if (userAuthenticationMaster != null) {
+            UserAuthDetails userAuthDetails = new UserAuthDetails(userAuthenticationMaster);
             System.out.println(userAuthDetails);
             return userAuthDetails;
         }
-        return new UserAuthDetails();
+        throw new UsernameNotFoundException("User not found");
     }
 }

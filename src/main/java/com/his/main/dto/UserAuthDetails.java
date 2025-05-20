@@ -17,48 +17,53 @@ import java.util.List;
 @Builder
 public class UserAuthDetails extends UserMaster implements UserDetails {
 
-    private String username;
-    private String password;
+    private final UserMaster userMaster;
 
-    public UserAuthDetails() {}
-
-    public UserAuthDetails(String username,String password) {
-        this.username = username;
-        this.password = password;
+    public UserAuthDetails(UserMaster userMaster) {
+        this.userMaster = userMaster;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        // Example: return user roles if needed
+        return new ArrayList<>();
     }
 
     @Override
     public String getPassword() {
-        return this.password;
+        return userMaster.getUserMastPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.username;
+        return userMaster.getUserMastUsername();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true; // or your logic
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return true; // or your logic
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true; // or your logic
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return userMaster.isActiveUser();
+    }
+
+    @Override
+    public String toString() {
+        return "UserAuthDetails{" +
+                "username='" + getUsername() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                '}';
     }
 }

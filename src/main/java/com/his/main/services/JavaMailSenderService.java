@@ -13,12 +13,10 @@ public class JavaMailSenderService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public boolean sendEmail(String userEmail, String rawFilename) {
+    public boolean sendEmail(String userEmail, String uniqueReportId) {
         try {
-            // URL-encode the filename
-            String encodedFilename = URLEncoder.encode(rawFilename, StandardCharsets.UTF_8);
 
-            String downloadUrl = "http://yourdomain.com/reports/" + encodedFilename;
+            String downloadUrl = "http://localhost:9090/reportService/printReport?reportId=" + uniqueReportId;
 
             String subject = "Your Report is Ready";
             String body = "Dear user,\n\nYour requested report is ready. You can download it using the link below:\n"

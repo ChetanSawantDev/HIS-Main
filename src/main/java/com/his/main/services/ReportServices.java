@@ -1,5 +1,6 @@
 package com.his.main.services;
 
+import com.his.main.dto.QuartzJobTriggerDTO;
 import com.his.main.entities.mongo.ReportLogsMaster;
 import com.his.main.entities.mongo.ReportPayload;
 import com.his.main.repositories.mongo.ReportLogRepository;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportServices {
@@ -24,10 +27,29 @@ public class ReportServices {
     private ReportPayloadRepo reportPayloadRepo;
 
     @Autowired
-    private JobSchedulerService jobSchedulerService;
+    private JobSchedulerService JobSchedulerService;
 
     public List<ReportLogsMaster> getAllReportLogs(){
-        return reportLogRepository.findAll();
+
+        List<ReportLogsMaster> reportLogsMasterList = reportLogRepository.findAll();
+        List<QuartzJobTriggerDTO> jobSchedulerList = JobSchedulerService.getScheduledJobs();
+        reportLogsMasterList = reportLogsMasterList.stream()
+                .map(l_report_log -> {
+                    Optional<QuartzJobTriggerDTO> quartzJobTriggerDTO = jobSchedulerList.stream()
+                            .filter(l_job_scheduler -> {
+                                return Objects.equals(l_job_scheduler.getTriggerName().split("_")[0], l_report_log.getReportName());
+                            })
+                            .findFirst();
+
+                    quartzJobTriggerDTO.ifPresent(dto ->
+                            l_report_log.setSchedulerStatus(dto.getTriggerState())
+                    );
+
+                    return l_report_log;
+                })
+                .collect(Collectors.toList());
+
+        return reportLogsMasterList;
     }
 
     public void saveReportLogsMaster(ReportLogsMaster reportLogsMaster){
@@ -46,4 +68,9 @@ public class ReportServices {
     public Optional<ReportPayload> getReportPayloadForPrint(String jobId){
         return reportPayloadRepo.findByJobKey(jobId);
     }
+
+    public Optional<ReportLogsMaster> findReportLogByReportName(String reportName){
+        return reportLogRepository.findByUniqueReportId(reportName);
+    }
+
 }

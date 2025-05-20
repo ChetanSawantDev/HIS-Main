@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class JwtResponseDto {
     private String accessToken;
 }

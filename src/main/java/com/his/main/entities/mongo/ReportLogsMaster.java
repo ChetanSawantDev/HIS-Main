@@ -21,12 +21,15 @@ public class ReportLogsMaster {
     private String reportName;
     private String jobKey;
     private String requestedBy;
+    private String uniqueReportId;
     private LocalDateTime requestedAt;
     private String status; // PENDING / RUNNING / COMPLETED / FAILED
     private String errorMessage;
     private String causedBy;
+    private LocalDateTime scheduledFor;
     private LocalDateTime completedAt;
     private String generatedFilePath;
     private Long executionTimeMs;
+    private String schedulerStatus;
     private Long memoryConsumedForGeneration;
 }
